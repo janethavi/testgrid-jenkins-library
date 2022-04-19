@@ -1,0 +1,27 @@
+{
+    "Parameters": {
+        "AWSAccessKeyId": "",
+        "AWSAccessKeySecret": "",
+        "WUMUsername": "",
+        "WUMPassword": "",
+        "OperatingSystem": "",
+        "JDK": "",
+        "DB": "",
+        "Product": "",
+        "ProductVersion": "",
+        "EC2KeyPair": "tg-pipeline-stack-test",
+        "DBEnabled": true,
+        "WSO2InstanceType": "t2.medium",
+        "ALBCertificateARN": "wso2_testgrid",
+        "DBUsername": "tgdbuser",
+        "DBPassword": "",
+        "DBAllocatedStorage": "20",
+        "DBClass": "db.t2.medium",
+        "DBEngineVersion": "5.7",
+        "UniqueIdentifier": "",
+        "StackName": "",
+        "S3AccessKeyID": "",
+        "S3SecretAccessKey": "",
+        "Region": "us-east-2"
+    }
+}
