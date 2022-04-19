@@ -57,6 +57,12 @@ stages {
                             trim: false
                         ),
                         string(
+                            name: 'os_version',
+                            defaultValue: '',
+                            description: 'The OS version.',
+                            trim: false
+                        ),
+                        string(
                             name: 'jdk_list',
                             defaultValue: '',
                             description: 'The JDK and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
@@ -145,8 +151,10 @@ stages {
                     ./scripts/write-parameter-file.sh "ProductVersion" ${product_version} "${WORKSPACE}/parameters/intg/parameters.json"
                     echo "Writting product deployment region to parameter file"
                     ./scripts/write-parameter-file.sh "Region" ${product_deployment_region} "${WORKSPACE}/parameters/intg/parameters.json"
-                    echo "WrittingMaven version to File"
+                    echo "Writting Maven version to File"
                     ./scripts/write-parameter-file.sh "MavenVersion" ${maven_version} "${WORKSPACE}/parameters/intg/parameters.json"
+                    echo "Writting OS version to File"
+                    ./scripts/write-parameter-file.sh "OSVersion" ${os_version`} "${WORKSPACE}/parameters/intg/parameters.json"
                 '''
                 //Generate S3 Log output path
                 s3BuildLogPath = "${s3BucketName}/artifacts/jobs/intg/${product}-${product_version}/build-${BUILD_NUMBER}"

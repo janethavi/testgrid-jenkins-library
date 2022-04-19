@@ -57,6 +57,7 @@ for os in ${osArray[@]}; do
             stackNamePrefix="${testType}-${product}${simplifiedProductVersion}-${updateType}"
             stackNameSufix=$(removeSpecialCharacters "${os}-${jdk}-${db}")
             stackName="${stackNamePrefix}-${stackNameSufix}-${uniqueIdentifier}"
+            dbName="Intg-DB-${uniqueIdentifier}"
 
             # An individual directory will be created per deployment in each build
             log_info "Creating a directory for ${deploymentDirName} deployment"
@@ -67,7 +68,8 @@ for os in ${osArray[@]}; do
             cp ${originalParameteFilePath} ${deploymentDirPath}
             ./scripts/write-parameter-file.sh "OS" ${os} ${deploymentParameterFilePath}
             ./scripts/write-parameter-file.sh "JDK" ${jdk} ${deploymentParameterFilePath}
-            ./scripts/write-parameter-file.sh "DB" ${db} ${deploymentParameterFilePath}
+            ./scripts/write-parameter-file.sh "DBEngine" ${db} ${deploymentParameterFilePath}
+            ./scripts/write-parameter-file.sh "DBName" ${dbName} ${deploymentParameterFilePath}
             ./scripts/write-parameter-file.sh "UniqueIdentifier" ${uniqueIdentifier} ${deploymentParameterFilePath}
             ./scripts/write-parameter-file.sh "StackName" ${stackName} ${deploymentParameterFilePath}
         done
