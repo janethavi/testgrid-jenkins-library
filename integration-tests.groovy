@@ -21,7 +21,7 @@ import hudson.model.*
 
 def deploymentDirectories = []
 def updateType = ""
-def testType = "sce"
+def testType = "intg"
 def s3BucketName = "testgrid-pipeline-logs"
 def s3BuildLogPath = ""
 
@@ -31,18 +31,65 @@ stages {
     stage('Clone CFN repo') {
         steps {
             script {
-                aws_repo_branch=""
+                properties([
+                    parameters([
+                        string(
+                            name: 'product',
+                            defaultValue: '',
+                            description: 'The WSO2 product that needs to be tested from TestGrid. Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
+                            trim: false
+                        ),
+                        string(
+                            name: 'product_version',
+                            defaultValue: '',
+                            description: 'The product version that needs to be tested using testgrid. Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
+                            trim: false
+                        ),
+                        string(
+                            name: 'product_deployment_region',
+                            defaultValue: '',
+                            description: 'The region where the product stack is getting deployed. Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md'
+                        ),
+                        string(
+                            name: 'os_list',
+                            defaultValue: '',
+                            description: 'The OS and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
+                            trim: false
+                        ),
+                        string(
+                            name: 'jdk_list',
+                            defaultValue: '',
+                            description: 'The JDK and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
+                            trim: false
+                        ),
+                        string(
+                            name: 'database_list',
+                            defaultValue: '',
+                            description: 'The Database type and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
+                            trim: false
+                        ),
+                        booleanParam(
+                            name: 'use_wum',
+                            defaultValue: false,
+                            description: 'If using WUM this should be true. If using U2 this should be false. Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md'
+                        ),
+                         string(
+                            name: 'maven_version', 
+                            defaultValue: '3.3.9',
+                            description: 'The maven version that needs to be used to build the product',
+                            trim: false
+                        )
+                    ])
+                ])
                 if (use_wum.toBoolean()){
-                    aws_repo_branch="${product_version}-new"
                     updateType="wum"
                 }else{
-                    aws_repo_branch="${product_version}-u2-new"
                     updateType="u2"
                 }
-                dir("aws-"+product) {
-                    git branch: "${aws_repo_branch}",
+                dir(testgrid) {
+                    git branch: "master",
                     credentialsId: "WSO2_GITHUB_TOKEN",
-                    url: "${cfn_repo_url}"
+                    url: "https://github.com/wso2/testgrid"
                 }
             }
         }
@@ -60,45 +107,45 @@ stages {
                 {
                     sh '''
                         echo "Writting AWS-Access Key ID to parameter file"
-                        ./scripts/write-parameter-file.sh "AWSAccessKeyId" ${accessKey} "${WORKSPACE}/parameters/parameters.json"
+                        ./scripts/write-parameter-file.sh "AWSAccessKeyId" ${accessKey} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                         echo "Writting AWS-Secret Access Key to parameter file"
-                        ./scripts/write-parameter-file.sh "AWSAccessKeySecret" ${secretAccessKey} "${WORKSPACE}/parameters/parameters.json"
+                        ./scripts/write-parameter-file.sh "AWSAccessKeySecret" ${secretAccessKey} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                         echo "Writting WUM Password to parameter file"
-                        ./scripts/write-parameter-file.sh "WUMPassword" ${wumPassword} "${WORKSPACE}/parameters/parameters.json"
+                        ./scripts/write-parameter-file.sh "WUMPassword" ${wumPassword} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                         echo "Writting WUM Username to parameter file"
-                        ./scripts/write-parameter-file.sh "WUMUsername" ${wumUserName} "${WORKSPACE}/parameters/parameters.json"
+                        ./scripts/write-parameter-file.sh "WUMUsername" ${wumUserName} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                         echo "Writting DB password to parameter file"
-                        ./scripts/write-parameter-file.sh "DBPassword" ${dbPassword} "${WORKSPACE}/parameters/parameters.json"
+                        ./scripts/write-parameter-file.sh "DBPassword" ${dbPassword} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                         echo "Writting S3 access key id to parameter file"
-                        ./scripts/write-parameter-file.sh "S3AccessKeyID" ${s3accessKey} "${WORKSPACE}/parameters/parameters.json"
+                        ./scripts/write-parameter-file.sh "S3AccessKeyID" ${s3accessKey} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                         echo "Writting S3 secret access key to parameter file"
-                        ./scripts/write-parameter-file.sh "S3SecretAccessKey" ${s3secretKey} "${WORKSPACE}/parameters/parameters.json"
+                        ./scripts/write-parameter-file.sh "S3SecretAccessKey" ${s3secretKey} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                     '''
                 }
                 withCredentials([usernamePassword(credentialsId: 'WSO2_GITHUB_TOKEN', usernameVariable: 'githubUserName', passwordVariable: 'githubPassword')]) 
                 {
                     sh '''
                        echo "Writting Github Username to parameter file"
-                        ./scripts/write-parameter-file.sh "GithubUserName" ${githubUserName} "${WORKSPACE}/parameters/parameters.json"
+                        ./scripts/write-parameter-file.sh "GithubUserName" ${githubUserName} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                         echo "Writting Github Password to parameter file"
-                        ./scripts/write-parameter-file.sh "GithubPassword" ${githubPassword} "${WORKSPACE}/parameters/parameters.json"
+                        ./scripts/write-parameter-file.sh "GithubPassword" ${githubPassword} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                     '''
                 }
                 sh '''
                     echo --- Adding common parameters to parameter file! ---
                     echo "Writting product name to parameter file"
-                    ./scripts/write-parameter-file.sh "Product" ${product} "${WORKSPACE}/parameters/parameters.json"
+                    ./scripts/write-parameter-file.sh "Product" ${product} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                     echo "Writting product version to parameter file"
-                    ./scripts/write-parameter-file.sh "ProductVersion" ${product_version} "${WORKSPACE}/parameters/parameters.json"
+                    ./scripts/write-parameter-file.sh "ProductVersion" ${product_version} "${WORKSPACE}/parameters/integration-tests/parameters.json"
                     echo "Writting product deployment region to parameter file"
-                    ./scripts/write-parameter-file.sh "Region" ${product_deployment_region} "${WORKSPACE}/parameters/parameters.json"
-                '''    
+                    ./scripts/write-parameter-file.sh "Region" ${product_deployment_region} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                '''
                 //Generate S3 Log output path
-                s3BuildLogPath = "${s3BucketName}/artifacts/jobs/${product}-${product_version}/build-${BUILD_NUMBER}"
+                s3BuildLogPath = "${s3BucketName}/artifacts/jobs/integration-tests/${product}-${product_version}/build-${BUILD_NUMBER}"
                 println "Your Logs will be uploaded to: s3://"+s3BuildLogPath
                 sh'''
                     echo "Writting S3 Log uploading endpoint to parameter file"
-                    ./scripts/write-parameter-file.sh "S3OutputBucketLocation" '''+s3BuildLogPath+''' "${WORKSPACE}/parameters/parameters.json"
+                    ./scripts/write-parameter-file.sh "S3OutputBucketLocation" '''+s3BuildLogPath+''' "${WORKSPACE}/parameters/integration-tests/parameters.json"
                     echo "Writing to parameter file completed!"
                     echo --- Preparing parameter files for deployments! ---
                     ./scripts/deployment-builder.sh ${product} ${product_version} '''+updateType+''' '''+testType+'''
@@ -155,39 +202,32 @@ def create_build_jobs(deploymentDirectory){
             stage("Deploy ${deploymentDirectory}") {
                 println "Deploying Stack:- ${deploymentDirectory}..."
                 String[] cloudformationLocation = []
-                switch(product) {
-                    case "apim":
-                        cloudformationLocation = ["${WORKSPACE}/aws-apim/apim/Minimum-HA/apim.yaml"]
+                switch(updateType) {
+                    case "u2":
+                        cloudformationLocation = ["${WORKSPACE}/jobs/intg-test-resources/update2-releases/wso2-u2-intg-test-cfn.yaml"]
                         break;
-                    case "is":
-                        // The deployment is done in the indexed order
-                        cloudformationLocation = ["${WORKSPACE}/aws-is/is/Minimum-HA/identity.yaml", "${WORKSPACE}/aws-is/is-samples/test-is-samples.yml"]
-                        break;
-                    case "ei":
-                        cloudformationLocation = ["${WORKSPACE}/aws-ei/integrator/Minimum-HA/integrator-ha.yaml", "${WORKSPACE}/aws-ei/integrator/Sample-Backends/activemq-be.yaml"]
-                        break;
-                    case "esb":
-                        cloudformationLocation = ["${WORKSPACE}/aws-esb/esb/Minimum-HA/esb-ha.yaml", "${WORKSPACE}/aws-esb/esb/Sample-Backends/activemq-be.yaml"]
+                    case "wum":
+                        cloudformationLocation = ["${WORKSPACE}/jobs/intg-test-resources/wum-releases/wso2-wum-intg-test-cfn.yaml"]
                         break;
                     default:
-                        println("Product name is incorrect! Existing the execution");
+                        println("Update level is incorrect! Existing the execution");
                         currentBuild.result = 'ABORTED'
                 }
                 sh'''
                     ./scripts/deployment-handler.sh '''+deploymentDirectory+''' '''+cloudformationLocation+''' 
                 '''
-                stage("Testing ${deploymentDirectory}") {
-                    println "Deployment testing..."
-                    sh'''
-                        ./scripts/test-deployment.sh '''+deploymentDirectory+''' ${product_repository} ${product_test_branch} ${product_test_script}
-                    '''
-                    stage("Uploading results to ${deploymentDirectory}") {
-                        println "Upoading logs..."
-                        sh'''
-                            ./scripts/post-actions.sh '''+deploymentDirectory+'''
-                        '''
-                    }
-                }
+                // stage("Testing ${deploymentDirectory}") {
+                //     println "Deployment testing..."
+                //     sh'''
+                //         ./scripts/test-deployment.sh '''+deploymentDirectory+''' ${product_repository} ${product_test_branch} ${product_test_script}
+                //     '''
+                //     stage("Uploading results to ${deploymentDirectory}") {
+                //         println "Upoading logs..."
+                //         sh'''
+                //             ./scripts/post-actions.sh '''+deploymentDirectory+'''
+                //         '''
+                //     }
+                // }
             }
         }
     }

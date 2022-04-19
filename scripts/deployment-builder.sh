@@ -21,6 +21,7 @@
 product=$1
 productVersion=$2
 updateType=$3
+testType=$4
 
 currentScript=$(dirname $(realpath "$0"))
 source ${currentScript}/common-functions.sh
@@ -52,7 +53,12 @@ for os in ${osArray[@]}; do
             deploymentParameterFilePath="${deploymentDirPath}/parameters.json"
             simplifiedProductVersion=$(removeSpecialCharacters ${productVersion})
             
-            stackNamePrefix="prod-${product}${simplifiedProductVersion}-${updateType}"
+            if [[ ${testType} == "intg" ]];
+            then
+                stackNamePrefix="intg-${product}${simplifiedProductVersion}-${updateType}"
+            else
+                stackNamePrefix="prod-${product}${simplifiedProductVersion}-${updateType}"
+            fi
             stackNameSufix=$(removeSpecialCharacters "${os}-${jdk}-${db}")
             stackName="${stackNamePrefix}-${stackNameSufix}-${uniqueIdentifier}"
 
