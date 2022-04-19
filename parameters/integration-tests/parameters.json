@@ -4,10 +4,12 @@
         "AWSAccessKeySecret": "",
         "WUMUsername": "",
         "WUMPassword": "",
-        "OperatingSystem": "",
+        "OS": "",
+        "OSVersion": "",
         "JDK": "",
-        "DB": "",
-        "Product": "",
+        "DBEngine": "",
+        "DBName": "",
+        "ProductName": "",
         "ProductVersion": "",
         "EC2KeyPair": "tg-pipeline-stack-test",
         "DBEnabled": true,
@@ -22,6 +24,7 @@
         "StackName": "",
         "S3AccessKeyID": "",
         "S3SecretAccessKey": "",
+        "MavenVersion": "",
         "Region": "us-east-2"
     }
 }

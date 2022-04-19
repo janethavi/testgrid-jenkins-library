@@ -86,7 +86,7 @@ stages {
                 }else{
                     updateType="u2"
                 }
-                dir(testgrid) {
+                dir("testgrid") {
                     git branch: "master",
                     credentialsId: "WSO2_GITHUB_TOKEN",
                     url: "https://github.com/wso2/testgrid"
