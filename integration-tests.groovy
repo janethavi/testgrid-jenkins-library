@@ -180,7 +180,7 @@ post {
     always {
         sh '''
             echo "Arranging the log files!"
-            parameters_directory="${WORKSPACE}/parameters/parameters.json"
+            parameters_directory="${WORKSPACE}/parameters/integration-tests/parameters.json"
 
             localLogDir="build-${BUILD_NUMBER}"
             mkdir -p ${localLogDir}
