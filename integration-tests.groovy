@@ -68,6 +68,12 @@ stages {
                             description: 'The Database type and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
                             trim: false
                         ),
+                        string(
+                            name: 'database_versions',
+                            defaultValue: '',
+                            description: 'The Database type and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
+                            trim: false
+                        ),
                         booleanParam(
                             name: 'use_wum',
                             defaultValue: false,
@@ -107,45 +113,47 @@ stages {
                 {
                     sh '''
                         echo "Writting AWS-Access Key ID to parameter file"
-                        ./scripts/write-parameter-file.sh "AWSAccessKeyId" ${accessKey} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                        ./scripts/write-parameter-file.sh "AWSAccessKeyId" ${accessKey} "${WORKSPACE}/parameters/intg/parameters.json"
                         echo "Writting AWS-Secret Access Key to parameter file"
-                        ./scripts/write-parameter-file.sh "AWSAccessKeySecret" ${secretAccessKey} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                        ./scripts/write-parameter-file.sh "AWSAccessKeySecret" ${secretAccessKey} "${WORKSPACE}/parameters/intg/parameters.json"
                         echo "Writting WUM Password to parameter file"
-                        ./scripts/write-parameter-file.sh "WUMPassword" ${wumPassword} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                        ./scripts/write-parameter-file.sh "WUMPassword" ${wumPassword} "${WORKSPACE}/parameters/intg/parameters.json"
                         echo "Writting WUM Username to parameter file"
-                        ./scripts/write-parameter-file.sh "WUMUsername" ${wumUserName} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                        ./scripts/write-parameter-file.sh "WUMUsername" ${wumUserName} "${WORKSPACE}/parameters/intg/parameters.json"
                         echo "Writting DB password to parameter file"
-                        ./scripts/write-parameter-file.sh "DBPassword" ${dbPassword} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                        ./scripts/write-parameter-file.sh "DBPassword" ${dbPassword} "${WORKSPACE}/parameters/intg/parameters.json"
                         echo "Writting S3 access key id to parameter file"
-                        ./scripts/write-parameter-file.sh "S3AccessKeyID" ${s3accessKey} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                        ./scripts/write-parameter-file.sh "S3AccessKeyID" ${s3accessKey} "${WORKSPACE}/parameters/intg/parameters.json"
                         echo "Writting S3 secret access key to parameter file"
-                        ./scripts/write-parameter-file.sh "S3SecretAccessKey" ${s3secretKey} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                        ./scripts/write-parameter-file.sh "S3SecretAccessKey" ${s3secretKey} "${WORKSPACE}/parameters/intg/parameters.json"
                     '''
                 }
                 withCredentials([usernamePassword(credentialsId: 'WSO2_GITHUB_TOKEN', usernameVariable: 'githubUserName', passwordVariable: 'githubPassword')]) 
                 {
                     sh '''
                        echo "Writting Github Username to parameter file"
-                        ./scripts/write-parameter-file.sh "GithubUserName" ${githubUserName} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                        ./scripts/write-parameter-file.sh "GithubUserName" ${githubUserName} "${WORKSPACE}/parameters/intg/parameters.json"
                         echo "Writting Github Password to parameter file"
-                        ./scripts/write-parameter-file.sh "GithubPassword" ${githubPassword} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                        ./scripts/write-parameter-file.sh "GithubPassword" ${githubPassword} "${WORKSPACE}/parameters/intg/parameters.json"
                     '''
                 }
                 sh '''
                     echo --- Adding common parameters to parameter file! ---
                     echo "Writting product name to parameter file"
-                    ./scripts/write-parameter-file.sh "Product" ${product} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                    ./scripts/write-parameter-file.sh "ProductName" ${product} "${WORKSPACE}/parameters/intg/parameters.json"
                     echo "Writting product version to parameter file"
-                    ./scripts/write-parameter-file.sh "ProductVersion" ${product_version} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                    ./scripts/write-parameter-file.sh "ProductVersion" ${product_version} "${WORKSPACE}/parameters/intg/parameters.json"
                     echo "Writting product deployment region to parameter file"
-                    ./scripts/write-parameter-file.sh "Region" ${product_deployment_region} "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                    ./scripts/write-parameter-file.sh "Region" ${product_deployment_region} "${WORKSPACE}/parameters/intg/parameters.json"
+                    echo "WrittingMaven version to File"
+                    ./scripts/write-parameter-file.sh "MavenVersion" ${maven_version} "${WORKSPACE}/parameters/intg/parameters.json"
                 '''
                 //Generate S3 Log output path
-                s3BuildLogPath = "${s3BucketName}/artifacts/jobs/integration-tests/${product}-${product_version}/build-${BUILD_NUMBER}"
+                s3BuildLogPath = "${s3BucketName}/artifacts/jobs/intg/${product}-${product_version}/build-${BUILD_NUMBER}"
                 println "Your Logs will be uploaded to: s3://"+s3BuildLogPath
                 sh'''
                     echo "Writting S3 Log uploading endpoint to parameter file"
-                    ./scripts/write-parameter-file.sh "S3OutputBucketLocation" '''+s3BuildLogPath+''' "${WORKSPACE}/parameters/integration-tests/parameters.json"
+                    ./scripts/write-parameter-file.sh "S3OutputBucketLocation" '''+s3BuildLogPath+''' "${WORKSPACE}/parameters/intg/parameters.json"
                     echo "Writing to parameter file completed!"
                     echo --- Preparing parameter files for deployments! ---
                     ./scripts/deployment-builder.sh ${product} ${product_version} '''+updateType+''' '''+testType+'''
@@ -180,7 +188,7 @@ post {
     always {
         sh '''
             echo "Arranging the log files!"
-            parameters_directory="${WORKSPACE}/parameters/integration-tests/parameters.json"
+            parameters_directory="${WORKSPACE}/parameters/intg/parameters.json"
 
             localLogDir="build-${BUILD_NUMBER}"
             mkdir -p ${localLogDir}

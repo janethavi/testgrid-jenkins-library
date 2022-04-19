@@ -23,7 +23,10 @@ productVersion=$2
 updateType=$3
 testType=$4
 
-originalParameteFilePath="${WORKSPACE}/parameters/parameters.json"
+currentScript=$(dirname $(realpath "$0"))
+source ${currentScript}/common-functions.sh
+## testtype added
+originalParameteFilePath="${WORKSPACE}/parameters/${testType}/parameters.json"
 
 osArray=(`echo ${os_list} | sed 's/,/\n/g'`)
 jdkArray=(`echo ${jdk_list} | sed 's/,/\n/g'`)
@@ -51,12 +54,7 @@ for os in ${osArray[@]}; do
             deploymentParameterFilePath="${deploymentDirPath}/parameters.json"
             simplifiedProductVersion=$(removeSpecialCharacters ${productVersion})
             
-            if [[ ${testType} == "intg" ]];
-            then
-                stackNamePrefix="intg-${product}${simplifiedProductVersion}-${updateType}"
-            else
-                stackNamePrefix="prod-${product}${simplifiedProductVersion}-${updateType}"
-            fi
+            stackNamePrefix="${testType}-${product}${simplifiedProductVersion}-${updateType}"
             stackNameSufix=$(removeSpecialCharacters "${os}-${jdk}-${db}")
             stackName="${stackNamePrefix}-${stackNameSufix}-${uniqueIdentifier}"
 
@@ -67,7 +65,7 @@ for os in ${osArray[@]}; do
             # Common paramter file will be copied to the deployment dir
             # Then the OS, JDK and DB will be added individually per deployment 
             cp ${originalParameteFilePath} ${deploymentDirPath}
-            ./scripts/write-parameter-file.sh "OperatingSystem" ${os} ${deploymentParameterFilePath}
+            ./scripts/write-parameter-file.sh "OS" ${os} ${deploymentParameterFilePath}
             ./scripts/write-parameter-file.sh "JDK" ${jdk} ${deploymentParameterFilePath}
             ./scripts/write-parameter-file.sh "DB" ${db} ${deploymentParameterFilePath}
             ./scripts/write-parameter-file.sh "UniqueIdentifier" ${uniqueIdentifier} ${deploymentParameterFilePath}
