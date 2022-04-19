@@ -35,48 +35,48 @@ stages {
                     parameters([
                         string(
                             name: 'product',
-                            defaultValue: '',
+                            defaultValue: 'wso2am',
                             description: 'The WSO2 product that needs to be tested from TestGrid. Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
                             trim: false
                         ),
                         string(
                             name: 'product_version',
-                            defaultValue: '',
+                            defaultValue: '3.2.0',
                             description: 'The product version that needs to be tested using testgrid. Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
                             trim: false
                         ),
                         string(
                             name: 'product_deployment_region',
-                            defaultValue: '',
+                            defaultValue: 'us-east-2',
                             description: 'The region where the product stack is getting deployed. Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md'
                         ),
                         string(
                             name: 'os_list',
-                            defaultValue: '',
+                            defaultValue: 'Ubuntu',
                             description: 'The OS and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
                             trim: false
                         ),
                         string(
                             name: 'os_version',
-                            defaultValue: '',
+                            defaultValue: '16.04',
                             description: 'The OS version.',
                             trim: false
                         ),
                         string(
                             name: 'jdk_list',
-                            defaultValue: '',
+                            defaultValue: 'OPEN_JDK11',
                             description: 'The JDK and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
                             trim: false
                         ),
                         string(
                             name: 'database_list',
-                            defaultValue: '',
+                            defaultValue: 'sqlserver-se',
                             description: 'The Database type and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
                             trim: false
                         ),
                         string(
                             name: 'database_versions',
-                            defaultValue: '',
+                            defaultValue: '5.7',
                             description: 'The Database type and its version. If there are multiple parameters, please add them by separating them by a ","(Comma). Check the README file on https://github.com/wso2/testgrid-jenkins-library/tree/main/README.md',
                             trim: false
                         ),
