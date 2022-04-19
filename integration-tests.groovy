@@ -220,10 +220,10 @@ def create_build_jobs(deploymentDirectory){
                 String[] cloudformationLocation = []
                 switch(updateType) {
                     case "u2":
-                        cloudformationLocation = ["${WORKSPACE}/jobs/intg-test-resources/update2-releases/wso2-u2-intg-test-cfn.yaml"]
+                        cloudformationLocation = ["${WORKSPACE}/testgrid/jobs/intg-test-resources/update2-releases/wso2-u2-intg-test-cfn.yaml"]
                         break;
                     case "wum":
-                        cloudformationLocation = ["${WORKSPACE}/jobs/intg-test-resources/wum-releases/wso2-wum-intg-test-cfn.yaml"]
+                        cloudformationLocation = ["${WORKSPACE}/testgrid/jobs/intg-test-resources/wum-releases/wso2-wum-intg-test-cfn.yaml"]
                         break;
                     default:
                         println("Update level is incorrect! Existing the execution");
