@@ -154,7 +154,7 @@ stages {
                     echo "Writting Maven version to File"
                     ./scripts/write-parameter-file.sh "MavenVersion" ${maven_version} "${WORKSPACE}/parameters/intg/parameters.json"
                     echo "Writting OS version to File"
-                    ./scripts/write-parameter-file.sh "OSVersion" ${os_version`} "${WORKSPACE}/parameters/intg/parameters.json"
+                    ./scripts/write-parameter-file.sh "OSVersion" ${os_version} "${WORKSPACE}/parameters/intg/parameters.json"
                 '''
                 //Generate S3 Log output path
                 s3BuildLogPath = "${s3BucketName}/artifacts/jobs/intg/${product}-${product_version}/build-${BUILD_NUMBER}"
