@@ -98,6 +98,8 @@ stages {
                 }else{
                     updateType="u2"
                 }
+                println("----")
+                println(updateType)
                 dir("testgrid") {
                     git branch: "master",
                     credentialsId: "WSO2_GITHUB_TOKEN",
