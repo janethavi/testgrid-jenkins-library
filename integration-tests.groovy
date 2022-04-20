@@ -218,6 +218,8 @@ def create_build_jobs(deploymentDirectory){
             stage("Deploy ${deploymentDirectory}") {
                 println "Deploying Stack:- ${deploymentDirectory}..."
                 String[] cloudformationLocation = []
+                println("-----")
+                println(updateType)
                 switch(updateType) {
                     case "u2":
                         cloudformationLocation = ["${WORKSPACE}/testgrid/jobs/intg-test-resources/update2-releases/wso2-u2-intg-test-cfn.yaml"]
