@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # -------------------------------------------------------------------------------------
 # Copyright (c) 2022 WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 #
@@ -77,7 +77,7 @@ do
         aws cloudformation describe-stack-events --stack-name ${stackName} --region ${region} |  jq -r '.StackEvents[] | select(.ResourceStatus=="CREATE_FAILED")'
         #bash ${currentScript}/../post-actions.sh ${deploymentName}
         echo "--------"
-        set +e
+        set -e
         exit 1
         echo "-------ddd-"
     fi
