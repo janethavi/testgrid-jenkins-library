@@ -76,8 +76,10 @@ do
         log_error "CloudFormation file errors identified!"
         aws cloudformation describe-stack-events --stack-name ${stackName} --region ${region} |  jq -r '.StackEvents[] | select(.ResourceStatus=="CREATE_FAILED")'
         #bash ${currentScript}/../post-actions.sh ${deploymentName}
+        echo "--------"
         set -e
         exit 1
+        echo "--------"
     fi
 
     # Add a proper comment  why this if confition was used
