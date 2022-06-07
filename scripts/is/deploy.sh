@@ -75,7 +75,7 @@ do
     then
         log_error "CloudFormation file errors identified!"
         aws cloudformation describe-stack-events --stack-name ${stackName} --region ${region} |  jq -r '.StackEvents[] | select(.ResourceStatus=="CREATE_FAILED")'
-        bash ${currentScript}/../post-actions.sh ${deploymentName}
+        #bash ${currentScript}/../post-actions.sh ${deploymentName}
         set -e
         exit 1
     fi
