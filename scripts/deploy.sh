@@ -64,9 +64,13 @@ function changeCommonLogPath(){
 }
 
 function cloudformationDeployment(){
-   echo "Executing product specific deployment..."
-   echo "Running ${product} deployment.."
-   bash ${currentScript}/${product}/deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
+    echo "Executing product specific deployment..."
+    echo "Running ${product} deployment.."
+    bash ${currentScript}/${product}/deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
+    if [[ $? != 0 ]];
+    then
+        exit 1
+    fi
 }
 
 # Get the output links of the Stack into a file
