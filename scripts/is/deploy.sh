@@ -71,6 +71,8 @@ do
     --region ${region}
 
     # When the CFN YAML has issues this will terminate the flow.
+    echo $?
+    echo "product deploy111"
     if [[ $? != 0 ]];
     then
         log_error "CloudFormation file errors identified!"
