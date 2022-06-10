@@ -71,9 +71,10 @@ do
     --region ${region}
 
     # When the CFN YAML has issues this will terminate the flow.
-    echo $?
+    errorCode=$?
     echo "product deploy111"
-    if [[ $? != 0 ]];
+    echo ${errorCode}
+    if [[ ${errorCode} != 0 ]];
     then
         log_error "CloudFormation file errors identified!"
         aws cloudformation describe-stack-events --stack-name ${stackName} --region ${region} |  jq -r '.StackEvents[] | select(.ResourceStatus=="CREATE_FAILED")'
