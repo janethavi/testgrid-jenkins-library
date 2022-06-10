@@ -68,7 +68,10 @@ function cloudformationDeployment(){
    log_info "Running ${product} deployment.."
    bash ${currentScript}/${product}/deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
    local exitCode=$?
-   echo ${exitCode}
+   if [[ ${errorCode} != 0 ]];
+    then
+        exit 1
+    fi
 }
 
 function writeCommonVariables(){
