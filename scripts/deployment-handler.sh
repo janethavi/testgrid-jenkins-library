@@ -66,7 +66,8 @@ function changeCommonLogPath(){
 function cloudformationDeployment(){
    log_info "Executing product specific deployment..."
    log_info "Running ${product} deployment.."
-   bash ${currentScript}/${product}/deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
+   exit 1
+   #bash ${currentScript}/${product}/deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
 }
 
 function writeCommonVariables(){

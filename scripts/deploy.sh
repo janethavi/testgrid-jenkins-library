@@ -135,8 +135,9 @@ function addCommonVariables(){
 
 function main(){
     changeCommonLogPath
-    cloudformationValidation
-    echo "------------------------------"
+    echo "tester1"
+    # cloudformationValidation
+    # cloudformationDeployment
     addCommonVariables
 }
 
