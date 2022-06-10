@@ -64,6 +64,8 @@ function changeCommonLogPath(){
 }
 
 function cloudformationDeployment(){
+    echo "aaaa"
+    exit 1
     echo "Executing product specific deployment..."
     echo "Running ${product} deployment.."
     #bash ${currentScript}/${product}/deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
