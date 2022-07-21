@@ -20,27 +20,28 @@
 
 set -o xtrace
 
-INPUTS_DIR=$2
-OUTPUTS_DIR=$4
-CONFIG_PROP_FILE="${TESTGRID_HOME}/config.properties"
+INPUTS_DIR=$1
+OUTPUTS_DIR=$2
 PROP_FILE="${INPUTS_DIR}/deployment.properties"
-PRODUCT_GIT_URL=$(grep -w "PRODUCT_GIT_URL" ${PROP_FILE} | cut -d'=' -f2 | cut -d'/' -f3-)
-PRODUCT_GIT_BRANCH=$(grep -w "PRODUCT_GIT_BRANCH" ${PROP_FILE} | cut -d'=' -f2)
-PRODUCT_GIT_REPO_NAME=$(grep -w "PRODUCT_GIT_URL" ${PROP_FILE} | rev | cut -d'/' -f1 | rev | cut -d'.' -f1)
-keyFileLocation=$(grep -w "keyFileLocation" ${PROP_FILE} | cut -d'=' -f2)
 WSO2InstanceName=$(grep -w "WSO2InstanceName" ${PROP_FILE} | cut -d'=' -f2 | cut -d"/" -f3)
 OperatingSystem=$(grep -w "OS" ${PROP_FILE} | cut -d'=' -f2)
-PRODUCT_NAME=$(grep -w "WSO2_PRODUCT" ${PROP_FILE}| cut -d'=' -f2 | cut -d'-' -f1)
-PRODUCT_VERSION=$(grep -w "WSO2_PRODUCT" ${PROP_FILE}| cut -d'=' -f2 | cut -d'-' -f2)
-TEST_REPORTS_DIR="$(grep -w "surefire_report_dir" ${PROP_FILE} | cut -d'=' -f2 )"
-WUM_USERNAME=$(grep -w "WUM_USERNAME" ${CONFIG_PROP_FILE} | cut -d'=' -f2)
-WUM_PASSWORD=$(grep -w "WUM_PASSWORD" ${CONFIG_PROP_FILE} | cut -d'=' -f2)
-SCRIPT_LOCATION=$(grep -w "TEST_SCRIPT_URL" ${PROP_FILE} | cut -d'=' -f2)
+PRODUCT_VERSION=$(grep -w "ProductVersion" ${PROP_FILE}| cut -d'=' -f2 | cut -d'-' -f2)
+PRODUCT_NAME=$(grep -w "Product" ${PROP_FILE}| cut -d'=' -f2 | cut -d'-' -f1)
+WUM_USERNAME=$(grep -w "WUMUsername" ${PROP_FILE} | cut -d'=' -f2)
+WUM_PASSWORD=$(grep -w "WUMPassword" ${PROP_FILE} | cut -d'=' -f2)
+PRODUCT_GIT_URL=$(grep -w "ProductRepository" ${PROP_FILE} | cut -d'=' -f2 | cut -d'/' -f3-)
+PRODUCT_GIT_BRANCH=$(grep -w "ProductTestBranch" ${PROP_FILE} | cut -d'=' -f2)
+GIT_USER=$(grep -w "GithubUserName" ${PROP_FILE} | cut -d'=' -f2)
+GIT_PASS=$(grep -w "GithubPassword" ${PROP_FILE} | cut -d'=' -f2)
+PRODUCT_GIT_REPO_NAME=$(grep -w "ProductRepository" ${PROP_FILE} | rev | cut -d'/' -f1 | rev | cut -d'.' -f1)
+keyFileLocation=$INPUTS_DIR
+SCRIPT_LOCATION=$(grep -w "ProductTestScriptLocation" ${PROP_FILE} | cut -d'=' -f2)
 TEST_SCRIPT_NAME=$(echo $SCRIPT_LOCATION | rev | cut -d'/' -f1 | rev)
+
+TEST_REPORTS_DIR="$(grep -w "surefire_report_dir" ${PROP_FILE} | cut -d'=' -f2 )"
 INFRA_JSON=$INPUTS_DIR/../workspace/InfraRepository/jobs/intg-test-resources/infra.json
-GIT_USER=$(grep -w "GIT_WUM_USERNAME" ${PROP_FILE} | cut -d'=' -f2)
-GIT_PASS=$(grep -w "GIT_WUM_PASSWORD" ${PROP_FILE} | cut -d'=' -f2)
 TEST_MODE=$(grep -w "TEST_MODE" ${PROP_FILE} | cut -d'=' -f2)
+
 function log_info(){
     echo "[INFO][$(date '+%Y-%m-%d %H:%M:%S')]: $1"
 }
@@ -58,6 +59,7 @@ else
 fi
 aws s3 cp 's3://integration-testgrid-resources/testgrid-key.pem' ${keyFileLocation}
 chmod 400 ${keyFileLocation}
+
 scp -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} ${TEST_SCRIPT_NAME} $instanceUser@${WSO2InstanceName}:/opt/testgrid/workspace/${TEST_SCRIPT_NAME}
 scp -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} ${INFRA_JSON} $instanceUser@${WSO2InstanceName}:/opt/testgrid/workspace/infra.json
 ssh -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} $instanceUser@${WSO2InstanceName} "cd /opt/testgrid/workspace && sudo bash /opt/testgrid/workspace/wso2-update.sh" "'$WUM_USERNAME'" "'$WUM_PASSWORD'"

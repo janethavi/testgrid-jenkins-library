@@ -92,7 +92,15 @@ function writeCommonVariables(){
 
 function addCommonVariables(){
     writeCommonVariables "S3OutputBucketLocation" "S3OutputBucketLocation" true
+    writeCommonVariables "Product" "Product" true
     writeCommonVariables "ProductVersion" "ProductVersion" true
+    writeCommonVariables "WUMUsername" "WUMUsername" true
+    writeCommonVariables "WUMPassword" "WUMPassword" true
+    writeCommonVariables "GithubUserName" "GithubUserName" true
+    writeCommonVariables "GithubPassword" "GithubPassword" true
+    writeCommonVariables "ProductRepository" "ProductRepository" true
+    writeCommonVariables "ProductTestBranch" "ProductTestBranch" true
+    writeCommonVariables "ProductTestScriptLocation" "ProductTestScriptLocation" true
     writeCommonVariables "S3AccessKeyID" "s3accessKey" true
     writeCommonVariables "S3SecretAccessKey" "s3secretKey" true
     writeCommonVariables "TESTGRID_EMAIL_PASSWORD" "testgridEmailPassword" true

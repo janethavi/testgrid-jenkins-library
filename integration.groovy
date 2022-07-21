@@ -102,6 +102,12 @@ stages {
                     ./scripts/write-parameter-file.sh "CloudformationLocation" ${cloudformation_location} "${WORKSPACE}/parameters/parameters.json"
                     echo "Writting product deployment ALB Certificate ARN to parameter file"
                     ./scripts/write-parameter-file.sh "ALBCertificateARN" ${alb_cert_arn} "${WORKSPACE}/parameters/parameters.json"
+                    echo "Writting product deployment Product Repository to parameter file"
+                    ./scripts/write-parameter-file.sh "ProductRepository" ${product_repository} "${WORKSPACE}/parameters/parameters.json"
+                    echo "Writting product deployment Product Test Branch to parameter file"
+                    ./scripts/write-parameter-file.sh "ProductTestBranch" ${product_test_branch} "${WORKSPACE}/parameters/parameters.json"
+                    echo "Writting product deployment Product Test script location to parameter file"
+                    ./scripts/write-parameter-file.sh "ProductTestScriptLocation" ${product_test_script} "${WORKSPACE}/parameters/parameters.json"
                 '''
                 //Generate S3 Log output path
                 s3BuildLogPath = "${s3BucketName}/artifacts/intg/${product}-${product_version}/build-${BUILD_NUMBER}"
@@ -167,6 +173,18 @@ def create_build_jobs(deploymentDirectory){
                 sh'''
                     ./scripts/deployment-handler.sh '''+deploymentDirectory+''' ${WORKSPACE}/${cloudformation_location} 
                 '''
+                stage("Testing ${deploymentDirectory}") {
+                    println "Deployment Integration testing..."
+                    sh'''
+                        ./scripts/test-deployment.sh '''+deploymentDirectory+''' ${product_repository} ${product_test_branch} ${product_test_script}
+                    '''
+                    stage("Uploading results to ${deploymentDirectory}") {
+                        println "Upoading logs..."
+                        sh'''
+                            ./scripts/post-actions.sh '''+deploymentDirectory+'''
+                        '''
+                    }
+                }
             }
         }
     }
