@@ -30,7 +30,7 @@ stages {
     stage('Clone CFN repo') {
         steps {
             script {
-                cfn_repo_url="https://github.com/wso2/testgrid-job-configs.git"
+                cfn_repo_url="https://github.com/wso2/testgrid.git"
                 cfn_repo_branch="master"
                 if (intg_test.toBoolean()) {
                     if (use_wum.toBoolean()){
@@ -42,7 +42,7 @@ stages {
                     println "This script is only used for Intg Tests. Please use the main.goovy file for Scenario Tests..."
                     currentBuild.result = 'ABORTED'
                 }
-                dir("testgrid-job-configs") {
+                dir("testgrid") {
                     git branch: "${cfn_repo_branch}",
                     credentialsId: "WSO2_GITHUB_TOKEN",
                     url: "${cfn_repo_url}"
