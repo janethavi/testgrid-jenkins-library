@@ -62,7 +62,7 @@ function deploymentTest(){
     local scriptDir="${productDirectoryLocation}/${productTestScript}"
     local scriptDirPath=$(dirname ${scriptDir})
     cd ${scriptDirPath}
-    source ${productDirectoryLocation}/${productTestScript} --input-dir "${deploymentDirectory}"  --output-dir "${testOutputDir}"
+    source ${productDirectoryLocation}/${productTestScript} "${deploymentDirectory}" "${testOutputDir}"
     if [ ${MVNSTATE} -gt 0 ];
     then
         log_error "Test Execution Failed with exit code ${MVNSTATE}"

@@ -176,7 +176,7 @@ def create_build_jobs(deploymentDirectory){
                 stage("Testing ${deploymentDirectory}") {
                     println "Deployment Integration testing..."
                     sh'''
-                        ./scripts/test-deployment.sh '''+deploymentDirectory+''' ${product_repository} ${product_test_branch} ${product_test_script}
+                        ./scripts/intg-test-deployment.sh '''+deploymentDirectory+''' ${product_repository} ${product_test_branch} ${product_test_script}
                     '''
                     stage("Uploading results to ${deploymentDirectory}") {
                         println "Upoading logs..."
