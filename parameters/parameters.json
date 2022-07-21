@@ -10,6 +10,7 @@
         "Product": "",
         "ProductVersion": "",
         "KeyPairName": "deployment-prod",
+        "EC2KeyPair": "deployment-prod",
         "WSO2InstanceType": "t2.medium",
         "CertificateName": "wso2_testgrid",
         "DBUsername": "tgdbuser",
