@@ -165,7 +165,7 @@ def create_build_jobs(deploymentDirectory){
             stage("Deploy ${deploymentDirectory}") {
                 println "Deploying Stack:- ${deploymentDirectory}..."
                 sh'''
-                    ./scripts/deployment-handler.sh '''+deploymentDirectory+'''${cloudformation_location} 
+                    ./scripts/deployment-handler.sh '''+deploymentDirectory+''' ${cloudformation_location} 
                 '''
             }
         }
