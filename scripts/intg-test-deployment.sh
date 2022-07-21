@@ -59,10 +59,7 @@ function deploymentTest(){
     fi
     mkdir ${testOutputDir}
     log_info "Executing scenario tests!"
-    local scriptDir="${productDirectoryLocation}/${productTestScript}"
-    local scriptDirPath=$(dirname ${scriptDir})
-    cd ${scriptDirPath}
-    source ${productDirectoryLocation}/${productTestScript} "${deploymentDirectory}" "${testOutputDir}"
+    bash ${currentScript}/intg-test-executer.sh "${deploymentDirectory}" "${testOutputDir}"
     if [ ${MVNSTATE} -gt 0 ];
     then
         log_error "Test Execution Failed with exit code ${MVNSTATE}"
