@@ -154,7 +154,7 @@ post {
         // script {
         //     sendEmail(deploymentDirectories, updateType)
         // }
-        cleanWs deleteDirs: true, notFailBuild: true
+        //cleanWs deleteDirs: true, notFailBuild: true
     }
 }
 }
