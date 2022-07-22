@@ -108,6 +108,10 @@ stages {
                     ./scripts/write-parameter-file.sh "ProductTestBranch" ${product_test_branch} "${WORKSPACE}/parameters/parameters.json"
                     echo "Writting product deployment Product Test script location to parameter file"
                     ./scripts/write-parameter-file.sh "ProductTestScriptLocation" ${product_test_script} "${WORKSPACE}/parameters/parameters.json"
+                    echo "Writting product update type to parameter file"
+                    ./scripts/write-parameter-file.sh "UpdateType" ${updateType} "${WORKSPACE}/parameters/parameters.json"
+                    echo "Writting product Surefire Report Directory"
+                    ./scripts/write-parameter-file.sh "SurefireReportDir" ${surefire_report_dir} "${WORKSPACE}/parameters/parameters.json"
                 '''
                 //Generate S3 Log output path
                 s3BuildLogPath = "${s3BucketName}/artifacts/intg/${product}-${product_version}/build-${BUILD_NUMBER}"

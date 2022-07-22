@@ -34,13 +34,13 @@ PRODUCT_GIT_BRANCH=$(grep -w "ProductTestBranch" ${PROP_FILE} | cut -d'=' -f2)
 GIT_USER=$(grep -w "GithubUserName" ${PROP_FILE} | cut -d'=' -f2)
 GIT_PASS=$(grep -w "GithubPassword" ${PROP_FILE} | cut -d'=' -f2)
 PRODUCT_GIT_REPO_NAME=$(grep -w "ProductRepository" ${PROP_FILE} | rev | cut -d'/' -f1 | rev | cut -d'.' -f1)
-keyFileLocation=$INPUTS_DIR
+keyFileLocation="${INPUTS_DIR}/testgrid-key.pem"
 SCRIPT_LOCATION=$(grep -w "ProductTestScriptLocation" ${PROP_FILE} | cut -d'=' -f2)
 TEST_SCRIPT_NAME=$(echo $SCRIPT_LOCATION | rev | cut -d'/' -f1 | rev)
+TEST_REPORTS_DIR="$(grep -w "SurefireReportDir" ${PROP_FILE} | cut -d'=' -f2 )"
+TEST_MODE=$(grep -w "UpdateType" ${PROP_FILE} | cut -d'=' -f2) 
 
-TEST_REPORTS_DIR="$(grep -w "surefire_report_dir" ${PROP_FILE} | cut -d'=' -f2 )"
 INFRA_JSON=$INPUTS_DIR/../workspace/InfraRepository/jobs/intg-test-resources/infra.json
-TEST_MODE=$(grep -w "TEST_MODE" ${PROP_FILE} | cut -d'=' -f2) 
 
 function log_info(){
     echo "[INFO][$(date '+%Y-%m-%d %H:%M:%S')]: $1"

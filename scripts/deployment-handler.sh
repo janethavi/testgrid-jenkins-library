@@ -105,6 +105,8 @@ function addCommonVariables(){
     writeCommonVariables "S3SecretAccessKey" "s3secretKey" true
     writeCommonVariables "TESTGRID_EMAIL_PASSWORD" "testgridEmailPassword" true
     writeCommonVariables "CustomURL" "CustomURL" true
+    writeCommonVariables "UpdateType" "UpdateType" true
+    writeCommonVariables "SurefireReportDir" "SurefireReportDir" true
 }
 
 function main(){
