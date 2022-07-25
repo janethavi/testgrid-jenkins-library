@@ -47,8 +47,6 @@ function log_info(){
 
 wget -q ${SCRIPT_LOCATION}
 
-log_info "Copying ${TEST_SCRIPT_NAME} to remote ec2 instance"
-
 if [[ ${OperatingSystem} == "Ubuntu" ]]; 
 then
     instanceUser="ubuntu"
@@ -61,11 +59,21 @@ fi
 aws s3 cp 's3://integration-testgrid-resources/testgrid-key.pem' ${keyFileLocation}
 chmod 400 ${keyFileLocation}
 
+log_info "Copying ${TEST_SCRIPT_NAME} to remote ec2 instance"
 scp -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} ${TEST_SCRIPT_NAME} $instanceUser@${WSO2InstanceName}:/opt/testgrid/workspace/${TEST_SCRIPT_NAME}
+
+log_info "Copying ${INFRA_JSON} to remote ec2 instance"
 scp -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} ${INFRA_JSON} $instanceUser@${WSO2InstanceName}:/opt/testgrid/workspace/infra.json
 
+log_info "Executing /opt/testgrid/workspace/wso2-update.sh on remote Instance"
 ssh -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} $instanceUser@${WSO2InstanceName} "cd /opt/testgrid/workspace && sudo bash /opt/testgrid/workspace/wso2-update.sh" "'$WUM_USERNAME'" "'$WUM_PASSWORD'"
+
+log_info "Executing /opt/testgrid/workspace/provision_db_${PRODUCT_NAME}.sh on remote Instance"
 ssh -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} $instanceUser@${WSO2InstanceName} "cd /opt/testgrid/workspace && sudo bash /opt/testgrid/workspace/provision_db_${PRODUCT_NAME}.sh"
+
+log_info "Executing ${TEST_SCRIPT_NAME} on remote Instance"
 ssh -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} $instanceUser@${WSO2InstanceName} "cd /opt/testgrid/workspace && sudo bash ${TEST_SCRIPT_NAME} ${PRODUCT_GIT_URL} ${PRODUCT_GIT_BRANCH} ${PRODUCT_NAME} ${PRODUCT_VERSION} ${GIT_USER} ${GIT_PASS} ${TEST_MODE}"
+
 mkdir -p ${OUTPUTS_DIR}/scenarios/integration-tests
+log_info "Coping Surefire Reports to TestGrid Slave..."
 scp -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation}  -r ${instanceUser}@${WSO2InstanceName}:/opt/testgrid/workspace/${PRODUCT_GIT_REPO_NAME}/${TEST_REPORTS_DIR}/surefire-reports ${OUTPUTS_DIR}/scenarios/integration-tests/.
