@@ -11,7 +11,7 @@
         "ProductVersion": "",
         "KeyPairName": "deployment-prod",
         "EC2KeyPair": "deployment-prod",
-        "WSO2InstanceType": "t3.large",
+        "WSO2InstanceType": "c4.2xlarge",
         "CertificateName": "wso2_testgrid",
         "DBUsername": "tgdbuser",
         "DBPassword": "",
