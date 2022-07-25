@@ -24,7 +24,7 @@ INPUTS_DIR=$1
 OUTPUTS_DIR=$2
 PROP_FILE="${INPUTS_DIR}/deployment.properties"
 WSO2InstanceName=$(grep -w "WSO2InstanceName" ${PROP_FILE} | cut -d'=' -f2 | cut -d"/" -f3)
-OperatingSystem=$(grep -w "OS" ${PROP_FILE} | cut -d'=' -f2)
+OperatingSystem=$(grep -w "OperatingSystem" ${PROP_FILE} | cut -d'=' -f2)
 PRODUCT_VERSION=$(grep -w "ProductVersion" ${PROP_FILE}| cut -d'=' -f2 | cut -d'-' -f2)
 PRODUCT_NAME=$(grep -w "Product" ${PROP_FILE}| cut -d'=' -f2 | cut -d'-' -f1)
 WUM_USERNAME=$(grep -w "WUMUsername" ${PROP_FILE} | cut -d'=' -f2)
@@ -49,9 +49,11 @@ wget -q ${SCRIPT_LOCATION}
 
 log_info "Copying ${TEST_SCRIPT_NAME} to remote ec2 instance"
 
-if [ ${OperatingSystem} = "Ubuntu" ]; then
+if [[ ${OperatingSystem} == "Ubuntu" ]]; 
+then
     instanceUser="ubuntu"
-elif [ ${OperatingSystem} = "CentOS" ]; then
+elif [[ ${OperatingSystem} == "CentOS" ]]; 
+then
     instanceUser="centos"
 else
     instanceUser="ec2-user"
