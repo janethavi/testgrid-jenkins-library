@@ -117,6 +117,7 @@ function addCommonVariables(){
     writeCommonVariables "TESTGRID_EMAIL_PASSWORD" "testgridEmailPassword" true
     writeCommonVariables "CustomURL" "CustomURL" true
     writeCommonVariables "UpdateType" "UpdateType" true
+    writeCommonVariables "TestType" "TestType" true
     writeCommonVariables "SurefireReportDir" "SurefireReportDir" true
 }
 

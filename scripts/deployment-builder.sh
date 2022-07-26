@@ -24,6 +24,7 @@ updateType=$3
 
 currentScript=$(dirname $(realpath "$0"))
 source ${currentScript}/common-functions.sh
+testType=$(extractParameters "TestType" ${parameterFilePath})
 originalParameteFilePath="${WORKSPACE}/parameters/parameters.json"
 
 osArray=(`echo ${os_list} | sed 's/,/\n/g'`)
@@ -52,7 +53,12 @@ for os in ${osArray[@]}; do
             deploymentParameterFilePath="${deploymentDirPath}/parameters.json"
             simplifiedProductVersion=$(removeSpecialCharacters ${productVersion})
             
-            stackNamePrefix="prod-${product}${simplifiedProductVersion}-${updateType}"
+            if [[ ${testType} == "intg"  ]]; 
+            then
+                stackNamePrefix="prod-intg-${product}${simplifiedProductVersion}-${updateType}"
+            else
+                stackNamePrefix="prod-${product}${simplifiedProductVersion}-${updateType}"
+            fi
             stackNameSufix=$(removeSpecialCharacters "${os}-${jdk}-${db}")
             stackName="${stackNamePrefix}-${stackNameSufix}-${uniqueIdentifier}"
 
