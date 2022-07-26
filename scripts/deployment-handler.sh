@@ -67,15 +67,12 @@ function changeCommonLogPath(){
 function cloudformationDeployment(){
     log_info "Executing product specific deployment..."
     log_info "Running ${product} deployment.."
-    echo "$testType----------------------------------"
     if [[ ${testType} == "intg"  ]];
     then
         if [[ ${product} == "wso2am" ]];
         then
-            echo "$testType 1111----------------------------------"
             bash ${currentScript}/apim/intg/intg-deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
         else
-            echo "$testType 2222----------------------------------"
             bash ${currentScript}/${product}/intg/intg-deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
         fi
     else

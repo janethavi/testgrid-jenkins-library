@@ -55,10 +55,8 @@ for os in ${osArray[@]}; do
             echo ${testType}
             if [[ ${testType} == "intg"  ]]; 
             then
-                echo "intgif1"
                 stackNamePrefix="prod-intg-${product}${simplifiedProductVersion}-${updateType}"
             else
-                echo "intgif2"
                 stackNamePrefix="prod-${product}${simplifiedProductVersion}-${updateType}"
             fi
             stackNameSufix=$(removeSpecialCharacters "${os}-${jdk}-${db}")
