@@ -111,7 +111,7 @@ stages {
                     echo "Writting product deployment Product Test script location to parameter file"
                     ./scripts/write-parameter-file.sh "ProductTestScriptLocation" ${product_test_script} "${WORKSPACE}/parameters/parameters.json"
                     echo "Writting product update type to parameter file"
-                    ./scripts/write-parameter-file.sh "UpdateType" '''+${updateType}+''' "${WORKSPACE}/parameters/parameters.json"
+                    ./scripts/write-parameter-file.sh "UpdateType" '''+updateType+''' "${WORKSPACE}/parameters/parameters.json"
                     echo "Writting test type to parameter file"
                     ./scripts/write-parameter-file.sh "TestType" "intg" "${WORKSPACE}/parameters/parameters.json"
                     echo "Writting product Surefire Report Directory"
