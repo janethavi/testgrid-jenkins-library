@@ -31,6 +31,7 @@ outputFile="${deploymentDirectory}/deployment.properties"
 
 source ${currentScript}/common-functions.sh
 product=$(extractParameters "Product" ${parameterFilePath})
+testType=$(extractParameters "TestType" ${parameterFilePath})
 
 echo "-----------"
 echo "Deployment Directory:    "${deploymentDirectory}
@@ -66,7 +67,12 @@ function changeCommonLogPath(){
 function cloudformationDeployment(){
     log_info "Executing product specific deployment..."
     log_info "Running ${product} deployment.."
-    bash ${currentScript}/${product}/deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
+    if [[ ${testType} == "intg"  ]];
+    then
+        bash ${currentScript}/${product}/intg/intg-deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
+    else
+        bash ${currentScript}/${product}/deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
+    fi
     if [[ $? != 0 ]];
     then
         # If deployment fails the handler should also fail
