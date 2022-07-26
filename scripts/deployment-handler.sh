@@ -69,7 +69,12 @@ function cloudformationDeployment(){
     log_info "Running ${product} deployment.."
     if [[ ${testType} == "intg"  ]];
     then
-        bash ${currentScript}/${product}/intg/intg-deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
+        if [[ ${product} == "wso2am" ]];
+        then
+            bash ${currentScript}/apim/intg/intg-deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
+        else
+            bash ${currentScript}/${product}/intg/intg-deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
+        fi
     else
         bash ${currentScript}/${product}/deploy.sh ${deploymentName} ${cloudformationFileLocations[@]}
     fi
