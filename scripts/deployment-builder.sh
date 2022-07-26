@@ -24,8 +24,8 @@ updateType=$3
 
 currentScript=$(dirname $(realpath "$0"))
 source ${currentScript}/common-functions.sh
-testType=$(extractParameters "TestType" ${parameterFilePath})
 originalParameteFilePath="${WORKSPACE}/parameters/parameters.json"
+testType=$(extractParameters "TestType" ${originalParameteFilePath})
 
 osArray=(`echo ${os_list} | sed 's/,/\n/g'`)
 jdkArray=(`echo ${jdk_list} | sed 's/,/\n/g'`)
