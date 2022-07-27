@@ -21,8 +21,6 @@ import hudson.model.*
 
 def deploymentDirectories = []
 def updateType = ""
-def s3BucketName = "testgrid-pipeline-logs"
-def s3BuildLogPath = ""
 
 pipeline {
 agent {label 'pipeline-agent'}
@@ -116,13 +114,6 @@ stages {
                     ./scripts/write-parameter-file.sh "TestType" "intg" "${WORKSPACE}/parameters/parameters.json"
                     echo "Writting product Surefire Report Directory"
                     ./scripts/write-parameter-file.sh "SurefireReportDir" ${surefire_report_dir} "${WORKSPACE}/parameters/parameters.json"
-                '''
-                //Generate S3 Log output path
-                s3BuildLogPath = "${s3BucketName}/artifacts/intg/${product}-${product_version}/build-${BUILD_NUMBER}"
-                println "Your Logs will be uploaded to: s3://"+s3BuildLogPath
-                sh'''
-                    echo "Writting S3 Log uploading endpoint to parameter file"
-                    ./scripts/write-parameter-file.sh "S3OutputBucketLocation" '''+s3BuildLogPath+''' "${WORKSPACE}/parameters/parameters.json"
                     echo "Writing to parameter file completed!"
                     echo --- Preparing parameter files for deployments! ---
                     ./scripts/deployment-builder.sh ${product} ${product_version} '''+updateType+'''
@@ -156,15 +147,8 @@ stages {
 post {
     always {
         sh '''
-            echo "Arranging the log files!"
-            parameters_directory="${WORKSPACE}/parameters/parameters.json"
-
-            localLogDir="build-${BUILD_NUMBER}"
-            mkdir -p ${localLogDir}
-            aws s3 cp s3://'''+s3BuildLogPath+'''/ ${localLogDir} --recursive --quiet
             echo "Job is completed... Deleting the workspace directories!"
         '''
-        archiveArtifacts artifacts: "build-${env.BUILD_NUMBER}/**/*.*", fingerprint: true
         // script {
         //     sendEmail(deploymentDirectories, updateType)
         // }
@@ -209,7 +193,7 @@ def sendEmail(deploymentDirectories, updateType) {
         </div>
         <table border="0" cellspacing="0" cellpadding="0" valign='top'>
             <td>
-                <h1>Scenario test results</span></h1>
+                <h1>Integration test results</span></h1>
             </td>
             <td>
                 <img src="http://cdn.wso2.com/wso2/newsletter/images/nl-2017/nl2017-wso2-logo-wb.png"/>
@@ -285,7 +269,7 @@ def sendEmail(deploymentDirectories, updateType) {
         <em>Tested by WSO2 Jenkins TestGrid Pipeline.</em>
         </div>
         """
-    subject="[TestGrid][${updateType.toUpperCase()}][${product.toUpperCase()}:${product_version}][SCE]-Build ${currentBuild.currentResult}-#${env.BUILD_NUMBER}"
+    subject="[TestGrid][${updateType.toUpperCase()}][${product.toUpperCase()}:${product_version}][INTG]-Build ${currentBuild.currentResult}-#${env.BUILD_NUMBER}"
     senderEmailGroup=""
     if(product.equals("apim") || product.equals("ei") || product.equals("esb")){
         senderEmailGroup = "integration-builder@wso2.com"
