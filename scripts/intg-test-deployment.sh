@@ -60,10 +60,10 @@ function deploymentTest(){
     mkdir ${testOutputDir}
     log_info "Executing scenario tests!"
     bash ${currentScript}/intg-test-executer.sh "${deploymentDirectory}" "${testOutputDir}"
-    if [ ${MVNSTATE} -gt 0 ];
+    if [[ ${MVNSTATE} -gt 0 ]];
     then
         log_error "Test Execution Failed with exit code ${MVNSTATE}"
-        log_error "Extracting logs and exiting!"
+        log_error "Executing post actions!"
         bash ${currentScript}/post-actions.sh ${deploymentName}
         exit 1
     else

@@ -20,6 +20,9 @@
 
 set -o xtrace
 
+currentScript=$(dirname $(realpath "$0"))
+source ${currentScript}/common-functions.sh
+
 INPUTS_DIR=$1
 OUTPUTS_DIR=$2
 PROP_FILE="${INPUTS_DIR}/deployment.properties"
@@ -47,10 +50,6 @@ else
     INFRA_JSON=$INPUTS_DIR/../../scripts/${PRODUCT_NAME}/intg/infra.json
 fi
 
-function log_info(){
-    echo "[INFO][$(date '+%Y-%m-%d %H:%M:%S')]: $1"
-}
-
 wget -q ${SCRIPT_LOCATION}
 
 if [[ ${OperatingSystem} == "Ubuntu" ]]; 
@@ -77,9 +76,21 @@ ssh -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileL
 log_info "Executing /opt/testgrid/workspace/provision_db_${PRODUCT_NAME}.sh on remote Instance"
 ssh -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} $instanceUser@${WSO2InstanceName} "cd /opt/testgrid/workspace && sudo bash /opt/testgrid/workspace/provision_db_${PRODUCT_NAME}.sh"
 
+# Setting the test status as failed
+MVNSTATE=1
 log_info "Executing ${TEST_SCRIPT_NAME} on remote Instance"
 ssh -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation} $instanceUser@${WSO2InstanceName} "cd /opt/testgrid/workspace && sudo bash ${TEST_SCRIPT_NAME} ${PRODUCT_GIT_URL} ${PRODUCT_GIT_BRANCH} ${PRODUCT_NAME} ${PRODUCT_VERSION} ${GIT_USER} ${GIT_PASS} ${TEST_MODE}"
+# Getting the test status
+MVNSTATE=$?
 
 mkdir -p ${OUTPUTS_DIR}/scenarios/integration-tests
 log_info "Coping Surefire Reports to TestGrid Slave..."
 scp -v -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${keyFileLocation}  -r ${instanceUser}@${WSO2InstanceName}:/opt/testgrid/workspace/${PRODUCT_GIT_REPO_NAME}/${TEST_REPORTS_DIR}/surefire-reports ${OUTPUTS_DIR}/scenarios/integration-tests/.
+
+if [[ ${MVNSTATE} != 0 ]];
+    then
+        log_error "Integration test was failed. Please check the logs"
+        exit 1
+    else
+        log_info "Integration test was successful!"
+fi

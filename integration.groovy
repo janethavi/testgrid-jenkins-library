@@ -186,12 +186,6 @@ def create_build_jobs(deploymentDirectory){
                     sh'''
                         ./scripts/intg-test-deployment.sh '''+deploymentDirectory+''' ${product_repository} ${product_test_branch} ${product_test_script}
                     '''
-                    // stage("Uploading results to ${deploymentDirectory}") {
-                    //     println "Upoading logs..."
-                    //     sh'''
-                    //         ./scripts/post-actions.sh '''+deploymentDirectory+'''
-                    //     '''
-                    // }
                 }
             }
         }
